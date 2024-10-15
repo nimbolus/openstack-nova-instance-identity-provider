@@ -1,0 +1,7 @@
+keystonemiddleware
+oslo_config
+flask
+setuptools
+waitress
+cryptography
+python-memcached
