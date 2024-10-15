@@ -26,8 +26,8 @@ jobs:
         uses: tj-actions/changed-files@v14.1
         with:
           files: |
-            **/*.go
-            go.*
+            **/*.py
+            requirements.txt
             Dockerfile
             .github/workflows/**/*
 
