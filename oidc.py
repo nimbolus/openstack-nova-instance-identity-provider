@@ -30,6 +30,7 @@ class OIDCProvider:
         return public_key
 
     def setup_routes(self):
+        # TODO: This route is not tested yet and only a dummy for implementing a openid discovery endpoint
         @self.app.route('/.well-known/openid-configuration')
         def openid_configuration():
             return {
