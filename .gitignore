@@ -179,3 +179,4 @@ venv
 *.conf
 !*.sample.conf
 *.pem
+jwks.json

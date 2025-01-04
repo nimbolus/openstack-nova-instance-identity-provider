@@ -13,9 +13,6 @@ from threading import Lock
 class OIDCProvider:
     SUPPORTED_SIGNING_ALGORITHMS = ["RS256", 'RS384', 'RS512',
                                     'ES256', 'ES384', 'ES512']
-    SIGNING_ALGORITHM_CURVE = {ec.SECP256R1: "P-256",
-                               ec.SECP384R1: "P-384",
-                               ec.SECP521R1: "P-521", }
 
     def __init__(self, app, conf):
         self.conf = conf
@@ -30,7 +27,7 @@ class OIDCProvider:
             self.generate_private_key)
 
     def load_jwks_state(self):
-        """Load JWKS keys cfrom state file"""
+        """Load JWKS keys from state file"""
         self.mutex.acquire()
         if os.path.exists(self.conf.jwks_state):
             with open(self.conf.jwks_state, 'rb') as state:
@@ -51,10 +48,13 @@ class OIDCProvider:
                 public_exponent=65537, key_size=4096)
         elif algo == 'ES256':
             private_key = ec.generate_private_key(ec.SECP256R1())
+            curve = 'P-256'
         elif algo == 'ES384':
             private_key = ec.generate_private_key(ec.SECP384R1())
+            curve = 'P-384'
         elif algo == 'ES512':
             private_key = ec.generate_private_key(ec.SECP521R1())
+            curve = 'P-521'
         else:
             raise ValueError(f"Unsupported key type, supported are {
                              self.SUPPORTED_SIGNING_ALGORITHMS}")
@@ -72,7 +72,7 @@ class OIDCProvider:
         elif isinstance(private_key, ec.EllipticCurvePrivateKey):
             jwks_key = {
                 'kty': 'EC',
-                'crv': self.SIGNING_ALGORITHM_CURVE.get(type(private_key)),
+                'crv': curve,
                 'use': 'sig',
                 'kid': str(uuid.uuid4()),
                 'x': self.int_to_base64(public_numbers.x),
