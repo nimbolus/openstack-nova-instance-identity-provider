@@ -23,7 +23,7 @@ podman run -d --name nova_instance_identity --net host \
 ```
 [api]
 vendordata_providers = DynamicJSON
-vendordata_dynamic_targets = nova-instance-identity@https://{{ kolla_internal_vip_address }}:8001/vendordata/instance-identity
+vendordata_dynamic_targets = instance_identity@https://{{ kolla_internal_vip_address }}:8001/vendordata/instance-identity
 
 [vendordata_dynamic_auth]
 auth_type = password
