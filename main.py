@@ -4,6 +4,7 @@ from oslo_config import cfg
 from waitress import serve as waitress_serve
 from flask import Flask, request, jsonify
 from keystonemiddleware import auth_token
+from openstack import connection as os_conn
 from oidc import OIDCProvider
 
 
@@ -14,6 +15,8 @@ common_opts = [
                help="Host the service listens to"),
     cfg.IntOpt('listen_port', default=8001,
                help="Port the service listens to"),
+    cfg.BoolOpt('project_name_lookup', default=False,
+                help="Lookup project name and add corresponding token claim"),
 ]
 
 CONF.register_opts(common_opts)
@@ -64,7 +67,18 @@ def wrap_keystone_middleware(app):
 
 app = Flask(__name__)
 app.wsgi_app = wrap_keystone_middleware(app.wsgi_app)
+
 oidc_provider = OIDCProvider(app, CONF.oidc_provider)
+
+os_client_auth_args = {
+    'auth_url': CONF.keystone_authtoken.auth_url,
+    'project_domain_id': CONF.keystone_authtoken.project_domain_id,
+    'user_domain_id': CONF.keystone_authtoken.user_domain_id,
+    'username': CONF.keystone_authtoken.username,
+    'password': CONF.keystone_authtoken.password,
+    'project_name': CONF.keystone_authtoken.project_name,
+}
+os_client = os_conn.Connection(**os_client_auth_args)
 
 
 @app.route('/vendordata/instance-identity', methods=['POST'])
@@ -78,6 +92,10 @@ def vendordata():
         'hostname': data['hostname'],
         'metadata': data['metadata'],
     }
+
+    if CONF.project_name_lookup:
+        project = os_client.get_project(data['project-id'])
+        payload['project-name'] = project.name
 
     if 'assume-role' in data['metadata']:
         payload['assume-role'] = data['metadata']['assume-role']
