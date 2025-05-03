@@ -6,3 +6,4 @@ waitress
 cryptography
 python-memcached
 schedule
+openstacksdk
