@@ -1,3 +1,5 @@
+import signal
+
 from oslo_config import cfg
 from waitress import serve as waitress_serve
 from flask import Flask, request, jsonify
@@ -65,7 +67,7 @@ app.wsgi_app = wrap_keystone_middleware(app.wsgi_app)
 oidc_provider = OIDCProvider(app, CONF.oidc_provider)
 
 
-@ app.route('/vendordata/instance-identity', methods=['POST'])
+@app.route('/vendordata/instance-identity', methods=['POST'])
 def vendordata():
     """Create response to Nova vendordata request with instance identity token"""
     data = request.get_json()
@@ -89,6 +91,13 @@ def vendordata():
     })
 
 
+def raise_sigint():
+    raise KeyboardInterrupt()
+
+
 if __name__ == '__main__':
+    # waitress does not listen to SIGTERM, so raise SIGINT
+    signal.signal(signal.SIGTERM, raise_sigint)
+
     print(f"Starting server on {CONF.listen_host}:{CONF.listen_port}")
     waitress_serve(app, host=CONF.listen_host, port=CONF.listen_port)
