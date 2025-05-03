@@ -91,13 +91,13 @@ def vendordata():
     })
 
 
-def raise_sigint():
+def handle_sigterm(signum, frame):
     raise KeyboardInterrupt()
 
 
 if __name__ == '__main__':
     # waitress does not listen to SIGTERM, so raise SIGINT
-    signal.signal(signal.SIGTERM, raise_sigint)
+    signal.signal(signal.SIGTERM, handle_sigterm)
 
     print(f"Starting server on {CONF.listen_host}:{CONF.listen_port}")
     waitress_serve(app, host=CONF.listen_host, port=CONF.listen_port)
