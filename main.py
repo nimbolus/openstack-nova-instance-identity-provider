@@ -17,6 +17,8 @@ common_opts = [
                help="Port the service listens to"),
     cfg.BoolOpt('project_name_lookup', default=False,
                 help="Lookup project name and add corresponding token claim"),
+    cfg.DictOpt('token_metadata', default={},
+                help="Attributes that will be returned alongside with the token"),
 ]
 
 CONF.register_opts(common_opts)
@@ -106,7 +108,7 @@ def vendordata():
     return jsonify({
         'token': token,
         'expires_at': expires_at,
-    })
+    } | CONF.token_metadata)
 
 
 def handle_sigterm(signum, frame):
