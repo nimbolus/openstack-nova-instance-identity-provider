@@ -1,6 +1,6 @@
 # Installation
 
-1. Create config file based on [nova-instance-identity.sample.conf](../dist/nova-instance-identity.sample.conf):
+1. Create config file based on [nova-instance-identity.sample.conf](../sample/nova-instance-identity.sample.conf):
 
 ```sh
 mkdir /etc/nova-instance-identity
@@ -16,7 +16,7 @@ podman run -d --name nova_instance_identity --net host \
     ghcr.io/nimbolus/openstack-nova-instance-identity-provider
 ```
 
-3. If using [kolla-ansible](https://docs.openstack.org/kolla-ansible/latest/), optionally create a haproxy config based on [haproxy.sample.cfg](../dist/haproxy.sample.cfg) at `/etc/kolla/config/haproxy/services.d/nova-instance-identity.cfg` on your deployment host and rollout haproxy role.
+3. If using [kolla-ansible](https://docs.openstack.org/kolla-ansible/latest/), optionally create a haproxy config based on [haproxy.sample.cfg](../sample/haproxy.sample.cfg) at `/etc/kolla/config/haproxy/services.d/nova-instance-identity.cfg` on your deployment host and rollout haproxy role.
 
 4. Register the vendordata endpoint in `nova.conf`, e.g. with kolla-ansible add the following config to `/etc/kolla/config/nova.conf` on your deployment host and rollout nova role.
 
