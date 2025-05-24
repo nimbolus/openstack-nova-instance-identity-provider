@@ -4,10 +4,10 @@
 
 To authenticate against other OIDC providers, the Nova Instance Identity Provider needs to be registered as a trusted token issuer on the OIDC provider side. The required information can be found below:
 
-**Issuer url:** defined in config file
-**Audience:** defined in config file
-**OIDC discovery url path:** `/.well-known/openid-configuration`
-**JWKS url path:** `/.well-known/jwks.json`
+- **Issuer url:** defined in config file
+- **Audience:** defined in config file
+- **OIDC discovery url path:** `/.well-known/openid-configuration`
+- **JWKS url path:** `/.well-known/jwks.json`
 
 ## Use with OpenStack CLI
 
