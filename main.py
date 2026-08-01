@@ -86,6 +86,9 @@ os_client = os_conn.Connection(**os_client_auth_args)
 @app.route('/vendordata/instance-identity', methods=['POST'])
 def vendordata():
     """Create response to Nova vendordata request with instance identity token"""
+    if request.environ.get('HTTP_X_SERVICE_IDENTITY_STATUS') != 'Confirmed':
+        return jsonify(error="service token required"), 403
+            
     data = request.get_json()
     payload = {
         'instance-id': data['instance-id'],
@@ -97,6 +100,9 @@ def vendordata():
 
     if CONF.project_name_lookup:
         project = os_client.get_project(data['project-id'])
+        if project is None:
+            return jsonify(error="project does not exist"), 400
+
         payload['project-name'] = project.name
 
     if 'assume-role' in data['metadata']:
