@@ -100,6 +100,9 @@ def vendordata():
 
     if CONF.project_name_lookup:
         project = os_client.get_project(data['project-id'])
+        if project is None:
+            return jsonify(error="project does not exist"), 400
+
         payload['project-name'] = project.name
 
     if 'assume-role' in data['metadata']:
