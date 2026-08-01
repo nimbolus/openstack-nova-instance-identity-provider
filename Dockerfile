@@ -9,4 +9,6 @@ COPY *.py /app/
 
 WORKDIR /app
 
+ENV PYTHONUNBUFFERED="1"
+
 CMD ["python3", "main.py"]
