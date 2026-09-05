@@ -86,8 +86,14 @@ os_client = os_conn.Connection(**os_client_auth_args)
 @app.route('/vendordata/instance-identity', methods=['POST'])
 def vendordata():
     """Create response to Nova vendordata request with instance identity token"""
-    if request.environ.get('HTTP_X_SERVICE_IDENTITY_STATUS') != 'Confirmed':
-        return jsonify(error="service token required"), 403
+    if CONF.keystone_authtoken.service_token_roles_required:
+        if request.environ.get('HTTP_X_SERVICE_IDENTITY_STATUS') != 'Confirmed':
+            return jsonify(error="service token required"), 403
+    else:
+        token_roles = str(request.environ.get('HTTP_X_ROLES')).split(',')
+        for role in CONF.keystone_authtoken.service_token_roles:
+            if role not in token_roles:
+                return jsonify(error=f"{role} role required"), 403
             
     data = request.get_json()
     payload = {
